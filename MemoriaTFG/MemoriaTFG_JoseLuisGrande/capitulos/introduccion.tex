@@ -1,0 +1,38 @@
+\chapter{Introducción}
+
+En estas primeras páginas del presente documento se detalla un pequeño resumen introductorio que plantee una vision global de proyecto. 
+
+\section{Motivación del proyecto}
+
+Enmarcado dentro del proyecto Robohealth, se pueden encontrar multitud de trabajos desarrollados por alumnos a lo largo de los cursos académicos.
+
+Uno de ellos es el Robohealth Arm, un brazo robótico que funcionaba de manera independiente al resto. Por otro lado, se venía trabajando en una plataforma basada en Node-Red donde integrar una interfaz que controlara los distintos dispositivos de manera remota.
+
+El presente documento desarrolla la unión del brazo robótico a la existente red domótica recurriendo a otra tecnología diferente. El resultado implica una integración en la red similar a la que se puede encontrar con las persianas, bombillas y LEDs RGB que se pueden encontrar en la habitación.
+
+\section{Objetivos}
+
+El fin del proyecto es la completa integración de un control a través de internet del brazo robótico. Los comandos se lanzan desde la interfaz de Node-Red y el ordenador de la sala transmite la orden vía radiofrecuencia al brazo.
+
+Se ha desarrollado a posibilidad de configurar las coordenadas articulares del brazo antes de ser enviadas, dentro de su rango óptimo de trabajo actual.
+
+La orden de Node-Red pone en marcha la ejecución de un script en Python que toma esos parámetros previamente especificados y envía por uno de los puertos serie el correspondiente frame. Este frame está pensado de acuerdo a las especificaciones de comunicación del brazo y del encapsulamiento de las comunicaciones de radio.
+
+Un dispositivo XBee ha sido configurado para enviar el frame de datos recibido por comunicación serial. Al poder concentrarse todo el procesamiento de la información correspondiente al emisor en el anteriormente mencionado script, no se precisa de ningún microcontrolador adicional que funcione junto al módulo de radiofrecuencia. Así pues, el módulo XBee funciona de manera exclusiva como un traductor entre la información en el puerto serie correspondiente y las ondas de radiofrecuencia.
+
+El dispositivo XBee receptor de la información que comanda el brazo robótico esta situado en el mismo. Su objetivo es ser capaz de captar el mensaje de radio específicamente diseñado para él y transmitirlo al microcontrolador del brazo. De la misma manera que en el otro XBee, su función será la de traductor de las ondas de radio (excusivamente de las destinadas a él) en información en el puerto serial. Esto es posible gracias al prediseño de los frames de información de acuerdo a las especificaciones y protocolos de comunicación del brazo.
+
+El dispositivo operativo provoca la reacción esperada en el brazo, moviendo sus servos hasta las coordenadas articulares especificadas.
+
+\section{Materiales utilizados}
+
+Aquí se pueden citar todos los materiales utilizados, tanto software como hardware, para que el lector tenga una primera de lo que se va a hablar en el TFG.
+
+\section{Estructura del documento}
+
+A continuación y para facilitar la lectura del documento, se detalla el contenido de cada capítulo.
+
+\begin{itemize}
+\item En el capítulo 1 se realiza una introducción.
+\item En el capítulo 2 se hace un repaso...
+\end{itemize}
