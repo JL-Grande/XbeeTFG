@@ -1,3 +1,28 @@
 \chapter{Marco Teórico}
 
-En este capítulo se describen (brevemente) todos los conceptos necesarios para entender el trabajo. No se trata de copiar el contenido de los libros de texto, si no de hacer un resumen de los conceptos necesarios para facilitar la lectura del documento al lector. Se entiende que el lector de un TFG tiene que tener unos conocimientos mínimos sobre el tema.
+El marco teórico del proyecto se limita al estudio de la naturaleza de las comunicaciones usadas. El trabajo emplea dos tipos de comunicaciones: raciofrecuencia y serial. La radiofrecuencia es la comunicación usada entre los módulos XBee. Por otro lado, la comunicación entre los módulos mencionados y sus correspondientes dispositivos de control se realiza por método serial. A continuación se comentan los conceptos básicos para comprender ambos métodos de comunicación.
+
+\section{Conceptos de la comunicación serial}
+
+La comunicación serie (o serial) es un método de transmisión de datos consistente en el envío de un único bit en un mismo instante de forma secuencial por una simple línea de transmisión. Lo simple de este método ha hecho que la comunicación serial se extienda masivamente entre los dispositivos comerciales, siendo actualmente un método común para comunicar ordenadores con distintos periféricos.
+
+Se opone a la llamada comunicación paralela, que precisa de una línea de transmisión por cada bit de datos a cambio de un aumento de las prestaciones. Es bastante usual usar ocho líneas de datos, correspondiente a un byte.
+
+\subsection{Características}
+
+Existen varios parámetros que especifican y definen la comunicación serial \cite{NI:2004}, y que deberán ser comunes entre los dispositivos partícipes de la transmisión de datos. Una diferencia en la cofiguración de los dispositivos impedirá la comunicación.
+
+\begin{itemize}
+\item \textbf{Baud rate}.
+\item El número de \textbf{bits de datos} que se precisan para codificar un caracter.
+\item \textbf{Parity bit}.
+\item \textbf{Stop bits}.
+\end{itemize}
+
+\subsection{Problemas}
+
+
+\subsection{Usos y aplicaciones}
+
+
+\section{Conceptos de la comunicación por radiofrecuencia}
