@@ -1,13 +1,98 @@
 \chapter{Estado del arte}
 
-En este capítulo...
+A continuación, se hace un repaso de la tecnología existente en la actualidad relacionada con los campos tocados por el presente proyecto. El objetivo es proporcionar al lector un punto de partida del trabajo y comentar las soluciones utilizadas por otros autores. 
 
+\section{Water level control using Raspberry Pi + XBee + XBMQ + MQTT + Node-Red \cite{zhivazhiva:RaspberryPi}}
 
-\section{¿En qué consiste el Estado del Arte?}
+Se trata de un proyecto que trabaja de manera bastante similar al trabajo objetivo del presente documento, teniendo ciertas tecnologías en común.
 
-Tal y como indica Wikipedia \footnote{\url{https://es.wikipedia.org/wiki/Estado_del_arte}}, \textit{en el ámbito de la investigación científica, el SoA (por sus siglas en inglés) hace referencia al estado último de la materia en términos de I+D, refiriéndose incluso al límite de conocimiento humano público sobre la materia.}
+El objetivo es el control de una pequeña bomba de agua que llena un depósito lentamente, con una distancia considerable entre ambos elementos y el ordenador central. La motivación para automatizar el proceso de llenado del depósito era evitar ciertos incidentes provocados por el olvido de la persona que controlaba la bomba, debido a los extensos tiempos que se tomaba el sistema para llenar el depósito. El autor comenta que la señal se perdía frecuentemente al usar unos módulos Wi-Fi baratos y terminó decidiéndose por la tecnología XBee de Digi, descartando cualquier tecnología que no fuera inalámbrica por los motivos de distancia comentados previamente.
 
-\textit{Dentro del ambiente tecnológico industrial, se entiende como ``estado del arte'', ``estado de la técnica'' o ``estado de la cuestión'', todos aquellos desarrollos de última tecnología realizados a un producto, que han sido probados en la industria y han sido acogidos y aceptados por diferentes fabricantes.}
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte1.png}
+\caption{Montaje del proyecto 3.1}
+\label{fig:EArte1}
+\end{figure}
 
+Una Raspberry Pi3 ejerce de ordenador central del sistema y es el componente encargado de coordinar la interacción con el usuario que manda la orden y la interacción con el depósito y la bomba de agua vía XBee (montaje en la figura \ref{fig:EArte1}).
 
-Es muy importante no confundir el estado del arte con un marco teórico o una guía de tecnologías o productos. En el estado del arte se sitúa al lector en el marco tecnológico en el que se ha desarrollado el TFG, comparándolo con desarrollos o productos parecidos.
+\begin{itemize}
+\item Por un lado, tiene instalado Mosquitto (MQTT); un programa que usa la red para crear una especie de "tablón de anuncios" virtual. Los dispositivos conectados a esa red pueden suscribirse a un \textit{topic} y recibir lo que otros dispositivos publican en él.
+La idea es que, haciendo uso de diferentes aplicaciones (como puede ser el caso de \textit{IoT MQTT Dashboard} en Android), se puedan publicar ciertos mensajes en algún \textit{topic} al que esté suscrita la Raspberry Pi desde otros dispositivos de manera remota. La Raspberry recibe esta información y actúa en consecuencia.
+\item XBMQ actúa de puente dentro de la Raspberry Pi entre MQTT y el módulo XBee conectado a la misma, que es el que se comunica con el actuador y el sensor.
+\item La Raspberry Pi envía los comandos al actuador y recibe la información del sensor a través del módulo XBee. En el lado del depósito, se sitúa el otro XBee con una salida controlando un pequeño relé que acciona y desactiva la bomba y una entrada que envía al XBee de la Raspberry el estado del sensor. Huelga mencionar que ambos XBee se han debido configurar adecuadamente.
+\item Para detener la bomba si el sensor detecta que el depósito está lleno, se precisa de cierta lógica que se programa en la Raspberry usando otra tecnología que se verá mas en detalle: Node-Red. El uso de este programa permite automatizar otras acciones paralelas como, por ejemplo, publicar un tweet cada vez que la bomba cambie de estado.
+\end{itemize}
+
+\section{Servidor Raspberry Pi-XBee en Python \cite{JONIUZ:IoT}}
+
+El proyecto detalla la conexión de un Arduino Uno y una Raspberry Pi a través de XBee. Viene siendo algo muy similar a una de las etapas del trabajo detallado en este documento.
+
+En el lado del Arduino Uno, emplea una XBee Shield 2.0 de Sheeed Studio (figura \ref{fig:EArte2}) para implemental el módulo de radio frecuencia.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte2.png}
+\caption{XBee Shield v2.0 - Seeed Studio}
+\label{fig:EArte2}
+\end{figure}
+
+Si se habla del lado de la Raspberry Pi, la interacción con el módulo XBee se realiza a través de una placa XBee Explorer.
+
+Como uno puede comprobar, existe una gran variedad de placas y shields que adaptan y facilitan la interacción de los módulos XBee con las plataformas de ordenadores y microcontroladores más populares.
+
+En este caso, los módulos XBee están configurados como AT. Más adelante en el documento se detalla esta cualidad.
+
+\section{University of Minnesota – Solar Vehicle \cite{UM:SV}}
+
+Estudiantes de la Universidad de Minnesota llevan desde 1990 desarrollado prototipos de coches solares para competir en varios certámenes a nivel nacional e internacional, obteniendo grandes resultados. En este contexto, en 2019 se ha presentado el nuevo prototipo denominado EOS II (figura \ref{fig:EArte3}). 
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte3.png}
+\caption{EOS II Solar car}
+\label{fig:EArte3}
+\end{figure}
+
+Con el apoyo de Digi, han implementado una red inalámbrica a la que conectan ordenadores y diferentes sensores. La conexión a esta red se realiza mediante módulos XBee. El objetivo final es la comunicación entre los módulos para la detección de errores y el almacenamiento de los datos adquiridos por esos mismos sensores durante el funcionamiento del prototipo.
+
+\section{Smart Porch Light Project \cite{SPLP:Mouser}}
+
+En el contexto del Internet de las Cosas (IoT), el autor desarrolla un proyecto de red inalámbrica de sensores y actuadores sincronizados a una nube en la red.
+
+El caso particular consta de una luz de exterior que es automáticamente controlada teniendo en cuenta los datos obtenidos de múltiples sensores que captan el estado del entorno. Estos sensores miden la luz ambiente, temperatura, humedad y luz ultravioleta. El control de la lámpara de exterior se lleva a cabo con un relé capaz de separar la etapa de potencia de la etapa de señal. Con el proyecto operativo, se usan servicios en la nube para almacenar y leer la información del estado del sistema; obteniendo como resultado una lámpara inteligente que permite mostrar a los usuarios el estado de los sensores desde cualquier dispositivo con acceso a internet.
+
+Los componentes hardware, al ser todos del mismo fabricante (Seeed Studio), permiten su apilamento en un único stack compacto (figura \ref{fig:EArte4}) de microcontrolador, shields módulo XBee. El microcontrolador es un Arduino Mega, los shields son de sensores y de XBee y,coronando el stack, se encuentra el módulo XBee LTE.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte4.png}
+\caption{Stack Hardware del proyecto 3.4}
+\label{fig:EArte4}
+\end{figure}
+
+A diferencia de proyectos mencionados anteriormente, en este se usa una API REST en lugar de MQTT para transferir la información al servicio de nube correspondiente y los módulos XBee son del modelo LTE, por lo que pueden acceder a la red directamente sin la necesidad de poseer enlace alguno a un ordenador con conexión, bien vía USB o a través de otro módulo XBee. Por otro lado, la interfaz donde mostrar el estado de los sensores no se basa en Node-RED, sino en Ubidots.
+
+\section{Home Automation System \cite{Molnar:Digi}}
+
+Estamos ante otro proyecto del campo IoT que hace uso de módulos XBee. En este caso, los actuadores y sensores de una casa en la que se ha implementado este sistema domótico están conectados a red inalámbrica de módulos XBee mediante cableados como el que se muestra en la figura \ref{fig:EArte5}.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte5.png}
+\caption{Esquema de conexión del sensor de temperatura}
+\label{fig:EArte5}
+\end{figure}
+
+La información se transmite a un portal central que tiene como base una placa Netduino o una Raspberry Pi con Windows IoT como sistema operativo. El portal envía y recibe mensajes de cada uno de los módulos XBee conectados y traduce la información de tal manera que el controlador lo pueda interpretar.
+
+Usa MQTT para la comunicación controlador-portal pero recurre a una nueva herramienta, openHAB, para proporcionar una interfaz gráfica donde monitorizar y controlar los sensores y actuadores de la casa.
+
+\section{Controlador central para un sistema domótico utilizando el protocolo inalámbrico ZigBee \cite{ULL:2016}}
+
+\section{Node-RED based custom full-room wake-up light \cite{Bulten:2019}}
+
+\section{ArduSmartHome \cite{UOC:2017}}
+
+\section{Captación y procesado de datos para Industria 4.0 con un prototipo de sensorización \cite{UAH:2018}}
