@@ -91,8 +91,45 @@ Usa MQTT para la comunicación controlador-portal pero recurre a una nueva herra
 
 \section{Controlador central para un sistema domótico utilizando el protocolo inalámbrico ZigBee \cite{ULL:2016}}
 
+Con este proyecto se habla del desarrollo de otro sistema domótico; esta vez basado en la placa de desarrollo Pandaboard (figura \ref{fig:EArte6}). A principios de la presente década, Pandaboard nació para competir en el mercado de los ordenadores pequeños de bajo coste, pero Raspberry terminó por dominar a la competencia. Hoy en día se trata de una placa obsoleta y poco usada por la comunidad.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte6.png}
+\caption{PandaBoard ES}
+\label{fig:EArte6}
+\end{figure}
+
+En este proyecto se recurre también al uso de dispositivos XBee para la transmisión de información y a MQTT. Incorpora Domoticz, un programa de supervisión y configuración domótica de código abierto.
+
+Como particularidad de la que se hablará de manera mas detallada más adelante, en este caso los módulos XBee funcionan en configuración API, en contraposición al modo AT mencionado previamente en otro proyecto.
+
 \section{Node-RED based custom full-room wake-up light \cite{Bulten:2019}}
+
+Proyecto que desarrolla una aplicación Node-RED con el fin de configurar un patrón despertador configurable. El desarrollo del proyecto referenciado \cite{Bulten:2019} se centra en la definición de los flujos de Node-RED puesto que el sistema domótico se ha desarrollado previamente \cite{Bulten:2018}.
+
+El flujo de Node-RED (figura \ref{fig:EArte7}) trabaja detectando la igualdad entre la hora programada y la actual. A continuación, comprueba si es fin de seamana y si está activada la alarma durante los fines de semana en la configuración. Por último y habiendo superado las etapas anteriores, se define una secuencia de iluminación de las bombillas correspondiente a la señal de despertador.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.75\textwidth]{figuras/EArte7.png}
+\caption{Flujo de Node-RED}
+\label{fig:EArte7}
+\end{figure}
+
+El proyecto domótico completo se basa en una instalación de Node-RED y Home Assistant, que proporciona la interfaz de usuario, sobre una Raspberry Pi. Las bombillas son bombillas inteligentes que reciben ordenes vía XBee. La recepción y envío de radiofrecuencia desde la Raspberry Pi se produce a través de un hub comercial que va alternando la conexión con las diferentes bombillas a muy alta velocidad.
 
 \section{ArduSmartHome \cite{UOC:2017}}
 
-\section{Captación y procesado de datos para Industria 4.0 con un prototipo de sensorización \cite{UAH:2018}}
+El proyecto ArduSmartHome consiste en el desarrollo de un sistema domótico de control que capture datos del entorno a través de varios sensores y monitorizar esa información usando Node-RED.
+
+La principal diferencia que tiene este proyecto con los mencionados previamente es la tecnología usada para la transmisión de la información. Mientras que hasta ahora se habiía usado principalmente radiofrecuencia a través de módulos XBee\footnote{La tecnología utilizada en el proyecto que describe este documento es, precisamente, radiofrecuencia usando módulos XBee}, en este caso se usa una red WiFi local.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte8.png}
+\caption{Arduino Yun}
+\label{fig:EArte8}
+\end{figure}
+
+Para conseguir esto, se hace uso de un microcontrolador diseñado para esta tarea, el Arduino Yun (figura \ref{fig:EArte8}). La red domótica posee varios de estos microcontroladores volcando los datos de los sensores que tienen conectados a la red local. Existe un Arduino Yun\footnote{Se puede lograr una equivalencia económica al Arduino Yun usando un Arduino UNO complementado con la shield de extensión Dragino Yun Shield v2.4} que ejerce las funciones de coordinador de las comunicaciones a la vez que es quién se encarga de establecerlas. En este proyecto también se hace uso de MQTT
