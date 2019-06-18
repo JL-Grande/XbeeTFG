@@ -44,19 +44,6 @@ Como uno puede comprobar, existe una gran variedad de placas y shields que adapt
 
 En este caso, los módulos XBee están configurados como AT. Más adelante en el documento se detalla esta cualidad.
 
-\section{University of Minnesota – Solar Vehicle \cite{UM:SV}}
-
-Estudiantes de la Universidad de Minnesota llevan desde 1990 desarrollado prototipos de coches solares para competir en varios certámenes a nivel nacional e internacional, obteniendo grandes resultados. En este contexto, en 2019 se ha presentado el nuevo prototipo denominado EOS II (figura \ref{fig:EArte3}). 
-
-\begin{figure}[b]
-\centering
-\includegraphics[width=0.55\textwidth]{figuras/EArte3.png}
-\caption{EOS II Solar car}
-\label{fig:EArte3}
-\end{figure}
-
-Con el apoyo de Digi, han implementado una red inalámbrica a la que conectan ordenadores y diferentes sensores. La conexión a esta red se realiza mediante módulos XBee. El objetivo final es la comunicación entre los módulos para la detección de errores y el almacenamiento de los datos adquiridos por esos mismos sensores durante el funcionamiento del prototipo.
-
 \section{Smart Porch Light Project \cite{SPLP:Mouser}}
 
 En el contexto del Internet de las Cosas (IoT), el autor desarrolla un proyecto de red inalámbrica de sensores y actuadores sincronizados a una nube en la red.
@@ -132,4 +119,17 @@ La principal diferencia que tiene este proyecto con los mencionados previamente 
 \label{fig:EArte8}
 \end{figure}
 
-Para conseguir esto, se hace uso de un microcontrolador diseñado para esta tarea, el Arduino Yun (figura \ref{fig:EArte8}). La red domótica posee varios de estos microcontroladores volcando los datos de los sensores que tienen conectados a la red local. Existe un Arduino Yun\footnote{Se puede lograr una equivalencia económica al Arduino Yun usando un Arduino UNO complementado con la shield de extensión Dragino Yun Shield v2.4} que ejerce las funciones de coordinador de las comunicaciones a la vez que es quién se encarga de establecerlas. En este proyecto también se hace uso de MQTT
+Para conseguir esto, se hace uso de un microcontrolador diseñado para esta tarea, el Arduino Yun (figura \ref{fig:EArte8}). La red domótica posee varios de estos microcontroladores volcando los datos de los sensores que tienen conectados a la red local. Existe un Arduino Yun\footnote{Se puede lograr una equivalencia económica al Arduino Yun usando un Arduino UNO complementado con la shield de extensión Dragino Yun Shield v2.4} que ejerce las funciones de coordinador de las comunicaciones a la vez que es quién se encarga de establecerlas. En este proyecto también se hace uso de MQTT.
+
+\section{University of Minnesota – Solar Vehicle \cite{UM:SV}}
+
+Estudiantes de la Universidad de Minnesota llevan desde 1990 desarrollado prototipos de coches solares para competir en varios certámenes a nivel nacional e internacional, obteniendo grandes resultados. En este contexto, en 2019 se ha presentado el nuevo prototipo denominado EOS II (figura \ref{fig:EArte3}). 
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=0.55\textwidth]{figuras/EArte3.png}
+\caption{EOS II Solar car}
+\label{fig:EArte3}
+\end{figure}
+
+Con el apoyo de Digi, han implementado una red inalámbrica a la que conectan ordenadores y diferentes sensores. La conexión a esta red se realiza mediante módulos XBee. El objetivo final es la comunicación entre los módulos para la detección de errores y el almacenamiento de los datos adquiridos por esos mismos sensores durante el funcionamiento del prototipo.
