@@ -1,17 +1,95 @@
-\chapter{Anexo ...}
+\chapter{Anexo A}
 
-En este apéndice...
+El Anexo A recoge y explica los procesos de instalación y configuración de los diferentes sistemas operativos, programas y herramientas necesarios para la implementación del proyecto.
+
+% Configuración de la visualización del código SW
+\lstset{backgroundcolor=\color{verde_p}, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
 
 
-\section{Lorem ipsum}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ornare erat nisl, a laoreet purus pellentesque id. Duis laoreet ipsum posuere est hendrerit, quis ornare nisi iaculis. Quisque imperdiet gravida egestas. Maecenas in mauris felis. Quisque quis imperdiet enim. Curabitur dignissim eget nisi lobortis placerat. Donec et magna rutrum, tempor magna a, consectetur tortor. Donec faucibus sodales sem, eu iaculis leo eleifend id. Nam semper lectus nisl, sed molestie erat pharetra quis. Quisque vestibulum metus elit, id interdum ligula dignissim a.
+\section{Instalación de Raspbian OS}\label{anexo:raspbian}
 
-Praesent eu velit ac lectus tristique tristique vitae et tellus. Mauris dignissim feugiat orci, vitae luctus dolor finibus ut. Ut congue bibendum lectus, vitae congue ligula. Donec commodo, lacus ac iaculis scelerisque, nunc purus finibus diam, at lacinia sem justo non quam. Aenean tempor urna vitae quam pretium porta. Sed in lacinia ipsum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer ut tristique est. Nam vitae interdum ligula, ac sodales dolor. Nulla mollis bibendum urna, sit amet interdum est aliquet at. Sed sagittis mi vel tellus posuere, eu rutrum arcu tristique.
+Raspbian es un sistema operativo orientado a Raspberry Pi por lo que existe multitud de documentación complementaria en la web oficial\cite{Raspberry:2019}
 
-Vestibulum aliquet orci pharetra justo auctor, pharetra viverra felis finibus. Ut ac gravida quam. Donec egestas turpis nisi, nec elementum orci feugiat at. In hac habitasse platea dictumst. Praesent mollis sem in felis feugiat, dapibus finibus metus scelerisque. Aliquam ultricies ante quis nibh laoreet, ac aliquam justo maximus. Etiam rhoncus pharetra imperdiet.
+Antes de comenzar a instalar el sistema operativo en una tarjeta microSD, se debe comprobar que ésta reúne los requisitos para ser usada en esta aplicación. Uno de estos requisitos es que la capacidad de la tarjeta sea superior a 8GB. Sin embargo, el uso de tarjetas de un tamaño superior a 32GB hace que sea necesario formatear la tarjeta antes de instalar el sistema operativo. Esto es debido a que el formato de serie (exFAT) no es compatible con el bootloader de Raspberry Pi, por lo que se deberá aplicar el formato FAT16 o FAT32 previamente.
 
-Nullam at libero quis augue tristique luctus eget placerat lorem. Donec pretium, dui scelerisque dapibus feugiat, ex lacus auctor ipsum, in ultricies odio justo in eros. Proin sodales velit non accumsan tempor. Mauris at consectetur est. Donec aliquam porttitor tortor, id malesuada nunc euismod vel. Ut id ullamcorper turpis, nec feugiat sapien. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquam tempus tortor, et gravida lectus iaculis non. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer non maximus felis. Nullam ac tempor augue. Vestibulum in efficitur mauris. Sed in nulla ultrices, pharetra ligula et, blandit nunc. Quisque dictum magna eget diam maximus, ac pulvinar nisi tempor. Pellentesque quis feugiat elit.
+Las instrucciones están pensadas teniendo en cuenta que se posee un ordenador con sistema operativo Windows.
 
-Integer euismod in urna id placerat. Etiam urna elit, tempor et turpis venenatis, volutpat viverra lacus. In luctus arcu sit amet lectus rutrum, id ultricies mi pellentesque. Nulla bibendum, orci in elementum aliquam, mi purus sollicitudin orci, quis ornare nulla arcu placerat urna. Integer consequat, risus ac elementum pellentesque, nulla est lobortis justo, sed mattis nibh ligula nec velit. Integer sem mauris, luctus vitae venenatis a, tincidunt egestas purus. In et lectus semper, dapibus massa sed, ultrices nisi. Ut sit amet dolor porta, accumsan lectus ut, semper tellus. Praesent velit odio, facilisis quis sodales vel, molestie at risus. In sollicitudin mauris risus, ullamcorper ullamcorper ligula commodo sed. Ut libero tortor, rhoncus ut sagittis quis, fringilla nec nunc. Ut efficitur nisi id leo feugiat ultrices. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed at malesuada arcu.
+\begin{enumerate}
+\item \textbf{Descargar el sistema operativo}
 
-Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed consectetur, justo nec scelerisque accumsan, leo erat dictum odio, id feugiat nibh felis vel ipsum. Duis urna ante, commodo vitae neque varius, congue egestas turpis. Donec condimentum ullamcorper dapibus. Nulla sed sapien eu diam commodo finibus. Nulla fringilla lectus vitae augue rutrum volutpat. Nulla in accumsan orci. Suspendisse eget diam massa.
+Se puede descargar la imagen desde la web de descargas de Raspberry Pi\footnote{\url{https://www.raspberrypi.org/downloads/raspbian/}}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/RaspbianDwIcon.png}
+\caption{Descarga de Raspbian Stretch}
+\label{fig:descargaRaspbian}
+\end{figure}
+
+\item \textbf{Descargar e instalar Etcher}
+
+Se precisa de una herramienta de escritura de imágenes y Etcher es la solución más sencilla para la mayoría de usuarios. Permite la escritura de la imagen sin la necesidad de extraer el archivo zip. 
+
+
+\item \textbf{Escribir la imagen a una microSD}
+
+Seleccionar el archivo de la imagen  la SD de destino es suficiente para flashear la imagen.
+
+\item Una vez acabado el proceso de descompresión, la instalación debería estar completada. Introduciendo la tarjeta micro SD en su correspondiente posición en la Raspberry Pi, ésta acederá a Raspbian para arrancar el sistema.
+
+\item Para comprobar la version del SO instalado, se puede hacer uso del comando \textit{lsb-release}
+
+\begin{lstlisting}[frame=single, label=command:lsb]
+lsb_release -a
+\end{lstlisting}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/RaspbianVersion.png}
+\caption{Versión de Raspbian}
+\label{fig:versionRaspbian}
+\end{figure}
+
+\end{enumerate}
+
+
+\section{Instalación MQTT en Raspbian OS}\label{anexo:mqtt}
+
+Mosquitto (broker de MQTT) se instala de igual manera que cualquier otra aplicación, haciendo uso de los repositorios.
+
+En primer lugar, se actualizan los repositorios.
+
+\begin{lstlisting}[frame=single, label=command:installmqtt1]
+sudo apt-get update
+\end{lstlisting}
+
+Posteriormente, se instala Mosquitto.
+
+\begin{lstlisting}[frame=single, label=command:installmqtt2]
+sudo apt-get install mosquitto
+\end{lstlisting}
+
+Si todo va bien, al terminar el proceso, MQTT debería estar instalado.
+
+Para probar la instalación, se pueden usar clientes de MQTT para enviar y recibir información a través un topic de prueba. Estos clientes son, por ejemplo, \textit{IoT MQTT Dashboard} en Android o \textit{MQTT.fx} en Windows.
+
+\section{Edición y compilación de scripts en Raspbian OS}
+
+
+
+\chapter{Anexo B}
+
+En el Anexo B se sitúan los desarrollos software íntegros que forman parte del proyecto.
+
+\section{Código SendAT.py}
+
+\section{Código SendAPI.py}
+
+\section{Código Receive.py}
+
+
+\chapter{Anexo C}
+
+El Anexo C recoge la documentación de interés de distintos componentes del proyecto
+
+\section{Datasheet XBee Shield}
