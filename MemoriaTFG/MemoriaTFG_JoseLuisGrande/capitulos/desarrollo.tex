@@ -136,7 +136,7 @@ ssh root@190.168.1.104
 
 El comando \textit{ssh} establece este tipo de conexiones. El usuario se indica en el lugar de \textit{root} en el ejemplo mientras que la IP del remoto se sitúa después del arroba. Es posible configurar el puerto con la opción \textit{-p} (por defecto se usa el puerto 22).
 
-\begin{lstlisting}[frame=single, label=command:ssh]
+\begin{lstlisting}[frame=single, label=command:ssh-p]
 ssh -p 22 root@190.168.1.104
 \end{lstlisting}
 
@@ -163,13 +163,13 @@ Existen varios \textit{Broker} de MQTT pero, con diferencia, el más popular es 
 
 Una guía para su instalación puede encontrarse en el Anexo \ref{anexo:mqtt}
 
-\subsubsection{MQTT en RoboHealt}
+\subsubsection{MQTT en RoboHealth}
 
 En cuanto al funcionamiento dentro de la habitación, existe un topic denominado \textit{Robohealth/room/devices} donde publican los distintos dispositivos mientras Node-RED está suscrito.
 
 Los mensajes en el topic de la habitación siguen un mismo formato:
 
-{'id':xx,'atrib1':'yy','atrib2':'zz',(...)}
+$${'id':xx,'atrib1':'yy','atrib2':'zz',(...)}$$
 
 \textit{xx} remplaza el identificador del cliente, único para cada dispositivo. RoboHealth Arm ha sido identificado con el número \textbf{99}.
 
@@ -179,9 +179,411 @@ Los mensajes en el topic de la habitación siguen un mismo formato:
 
 \subsection{Node-RED}
 
+Node-RED es una herramienta de programación basada en una interfaz de programación online representada a través de flujos y nodos (figura \ref{fig:nodeinterfaz}). Viene preinstalada en Raspbian Stretch, lo que puede dar una idea del grado de integración que tiene esta herramienta en la comunidad.
 
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/InterfazNodeRed.png}
+\caption{Ejemplo de interfaz de Node-RED}
+\label{fig:nodeinterfaz}
+\end{figure}
+
+Los flujos representan caminos de transmisión de los objetos de node-RED, denominados por defecto \textit{msg}. Estos objetos \textit{msg} poseen unos atributos, algunos creados por defecto y otros opcionales customizados. Uno de los atributos por defecto es \textit{payload}, que suele ser utilizado como contenedor de la información a trasladar. Esta información puede ser de casi cualquier tipo, desde un booleano hasta otro objeto con sus propios atributos. El otro de los atributos por defecto es \textit{\_msgid}, que es un identificador del mensaje enviado que sirve para monitorizar su estado a lo largo del flujo.
+
+Los nodos son etapas en las que, basándose en diferentes tecnologías, se realiza una acción cuando se produce la entrada del mensaje a través del flujo. Esta acción puede ir desde producir algún tipo de reacción ajena a Node-RED hasta modificar variables internas del programa, modificando (o no) el mensaje de flujo antes de volver a transmitirlo.
+
+Existen nodos relacionados con un gran número de tareas. La comunidad puede aportar sus propios paquetes de nodos, ampliando progresivamente el número de tecnologías compatibles con Node-RED. Algunos de los nodos más representativos y usados en el proyecto Robohealth son los siguientes:
+
+\begin{itemize}
+\item \textbf{Debug node}
+
+El nodo \textit{Debug} (figura \ref{fig:nodedebug}) representa una imagen del objeto \textit{msg} o de uno de sus atributos a su paso por un punto concreto del flujo. Normalmente hace uso de la pestaña debug de la interfaz de Node-RED.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/debugNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/debugNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo Debug}\label{fig:nodedebug}
+\end{figure}
+
+\item \textbf{Function node}
+
+El nodo \textit{Function} (figura \ref{fig:nodefunction}) contiene una función programada en JavaScript que, por convenio, recibe el objeto \textit{msg} proveniente del flujo y lo utiliza para crear un nuevo objeto (u objetos) \textit{message} que pasar al siguiente nodo del flujo. Existe la posibilidad de no devolver nada si se desea congelar el flujo en ciertas situaciones.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/fcnNode.png}
+\caption{Nodo Function}
+\label{fig:nodefunction}
+\end{figure}
+
+\item \textbf{Exec node}
+
+El nodo \textit{Exec} (figura \ref{fig:nodeexec}) es el nodo de ejecución de comandos. El comando a ejecutar se define en las propiedades, siendo posible añadir el mensaje recibido a través del flujo al final del comando. Las salidas del bloque corresponden a \textit{stdout}, \textit{stderr} y a objetos devueltos. Es posible configurar si la salida debe volcarse al final de la ejecución o en directo durante la ejecución del programa.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/execNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/execNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo Debug}\label{fig:nodeexec}
+\end{figure}
+
+\item \textbf{MQTT node}
+
+Algunos de los nodos desarrollados por terceros son los relacionados con MQTT. Existen nodos de entrada de MQTT (figura \ref{fig:nodeMQTT}) y nodos de salida. La configuración disponible incluye la IP, el puerto y el \textit{topic} al que suscribirse o publicar.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/MQTTNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/MQTTNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo entrada MQTT}\label{fig:nodeMQTT}
+\end{figure}
+
+\item \textbf{Nodos de gestión de flujo}
+
+Una serie de nodos se usan para modificar el comportamiento normal del flujo de los mensajes \textit{msg}. Posibilitan la aplicación de cierta lógica al programa.
+
+\begin{itemize}
+
+\item \textbf{Inject node}
+
+El nodo de inyección introduce un mensaje en el flujo. Se puede programar una inyección periódica, que haga funcionar el flujo de manera similar a un bucle software.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/injectNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/injectNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo Inject}\label{fig:nodeinject}
+\end{figure}
+
+\item \textbf{Delay node}
+
+El nodo \textit{Delay} detiene la ejecución del programa durante el tiempo especificado.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/delayNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/delayNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo Delay}\label{fig:nodedelay}
+\end{figure}
+
+\item \textbf{Switch node}
+
+El nodo \textit{Switch} compara algún atributo del mensaje \textit{msg} con unos valores programados y asignados a cada una de las salidas. Es equivalente a la expresión condicional \textit{switch-case}.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/switchNode.png}
+    \subcaption{Representación}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figuras/switchNodeProp.png}
+    \subcaption{Configuración}
+  \end{minipage}
+  \caption{Nodo Switch}\label{fig:nodeexec}
+\end{figure}
+
+\end{itemize}
+
+
+\item \textbf{Nodos de UI}
+
+Existen varios nodos que representan objetos en el Dashboard de Node-RED que sirve de interfaz gráfica. Estos nodos pueden ser de entrada o salida de información
+
+\begin{itemize}
+\item \textbf{Ejemplos de nodos de entrada}
+
+Los nodos de entrada (figura \ref{fig:nodeinput}) permiten introducir mensajes en el sistema. Existen entradas digitales, como pueden ser botones o interruptores, o entradas analógicas, como sliders.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/templateNode.png}
+    \subcaption{Nodo Template}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figuras/switchinputNode.png}
+    \subcaption{Nodo interruptor}
+  \end{minipage}
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/sliderNode.png}
+    \subcaption{Nodo Slider}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/colourNode.png}
+    \subcaption{Nodo selector de color}
+  \end{minipage}
+  \caption{Nodos de entrada}\label{fig:nodeinput}
+\end{figure}
+
+\item \textbf{Ejemplos de nodos de salida}
+
+Los nodos de salida (figura \ref{fig:nodeoutput}) representan el valor de algún atributo del mensaje que les llega. Esta representación puede tener formato de texto, numérico o gráfico.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/textNode.png}
+    \subcaption{Nodo de texto}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/gaugeNode.png}
+    \subcaption{Nodo gráfico}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{figuras/chartNode.png}
+    \subcaption{Nodo Chart}
+  \end{minipage}
+  %\hfill
+  \caption{Nodos de salida}\label{fig:nodeoutput}
+\end{figure}
+
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Node-RED en RoboHealth}
+
+La aplicación de Node-RED para los dispositivos de RoboHealth se orienta a la interacción con el usuario a través de una interfaz gráfica. Esta interfaz gráfica se divide en dos layout.
+
+El primer layout (figura \ref{fig:infoRaspyDash} se encarga del control básico del estado de la Raspberry Pi. Incluye representaciones de la temperatura y el uso de la CPU así como botones para reiniciar y apagar el ordenador.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.7\textwidth]{figuras/infoRaspyDash.png}
+\caption{UI de control elemental}
+\label{fig:infoRaspyDash}
+\end{figure}
+
+El flujo (figura \ref{fig:infoRaspyFlow}) se basa en la ejecución de comandos para obtener la información de temperatura (1/código \ref{comando:infoRaspy}) y carga de la CPU (2/código \ref{comando:infoRaspy}). De igual manera, se lanzan comandos para apagar (3/código \ref{comando:infoRaspy}) y reiniciar (4/código \ref{comando:infoRaspy}) la Raspberry Pi. Los comandos utilizados son los siguientes:
+
+% Configuración de la visualización del código SW
+\lstset{backgroundcolor=\color{verde_p},numbers=left,numberstyle=\tiny, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=single, label=command:ssh, label=comando:infoRaspy]
+$ vcgencmd measure_temp
+$ top -d 0.5 -b -n2 | grep "Cpu(s)"|tail -n 1 | awk '{print $2 + $4}'
+$ sudo shutdown -h now
+$ sudo reboot
+\end{lstlisting}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/infoRaspyFlow.png}
+\caption{Flujo de control elemental}
+\label{fig:infoRaspyFlow}
+\end{figure}
+
+El segundo layout incluye el control de los dispositivos previamente desarrollado. El Dashboard (figura \ref{fig:Dashboard}) recoge la UI para controlar cada bloque de dispositivos. A continuación se recogen ejemplos de los flujos correspondientes a la cama (figura \ref{fig:camaFlow}), la habitación (figura \ref{fig:persianasFlow}\footnote{En la imagen se recoge únicamente el flujo correspondiente a las persianas}) o los dispositivos Zolertia (figura \ref{fig:zolertiaFlow}).
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.8\textwidth]{figuras/Dashboard.png}
+\caption{Dashboard}
+\label{fig:Dashboard}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/camaFlow.png}
+\caption{Flujo de control de la cama}
+\label{fig:camaFlow}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/persianasFlow.png}
+\caption{Flujo de control de las persianas}
+\label{fig:persianasFlow}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/zolertiaFlow.png}
+\caption{Flujo de control de Zolertia}
+\label{fig:zolertiaFlow}
+\end{figure}
+
+\subsubsection{Node-RED para RoboHealth Arm}
+
+Para el control de RoboHealth Arm se ha desarrollado un flujo en Node-RED que se explica a continuación.
+
+En la figura \ref{fig:ONOFFRHA} se muestra el flujo de encendido del brazo robótico
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/ONOFFFlowRHA.png}
+\caption{Flujo de encendido de RHA}
+\label{fig:ONOFFRHA}
+\end{figure}
+
+El flujo se basa en la obtención el estado del control del brazo a través del botón ON/OFF y su asignación a una variable de flujo. Esta asignación se efectúa a través de la función \textit{FlowVar status} (código \ref{code:FlowVarStatus})
+
+% Esto para configurar como se va a visualizar el código
+\lstset{numbers=left,numberstyle=\tiny, language=Java, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+
+\begin{lstlisting}[frame=leftline, caption={FlowVar status}, label=code:FlowVarStatus]
+if (msg.payload === true) {
+    flow.set("status","ON");
+}
+else if (msg.payload === false) {
+    flow.set("status","OFF");
+}
+msg.payload = flow.get("status")
+return msg;
+\end{lstlisting}
+
+Se incluye también en el flujo la inyección del estado inicial OFF al comenzar la ejecución.
+
+El flujo de recepción de la información de RHA se programa como en la figura \ref{fig:RecepcionRHA}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/RecepcionFlowRHA.png}
+\caption{Flujo de recepción de RHA}
+\label{fig:RecepcionRHA}
+\end{figure}
+
+La recepción de un flanco de encendido, pone a correr el comando \ref{comand:getDataRHA} que lanza un script que devuelve los datos recibidos. Estos datos se interpretan con la función \textit{Data interpreter} (código \ref{code:DataInterpreter}) y se muestra la información en el Dashboard con una salida gráfica
+
+% Configuración de la visualización del código SW
+\lstset{backgroundcolor=\color{verde_p}, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=single, label=command:getDataRHA]
+$ sudo python /home/pi/Xbee/receive.py
+\end{lstlisting}
+
+% Esto para configurar como se va a visualizar el código
+\lstset{numbers=left,numberstyle=\tiny, language=Java, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=leftline, caption={Data Interpreter}, label=code:DataInterpreter]
+var num1_str = msg.payload[1]+msg.payload[2]+msg.payload[3];
+if (msg.payload.length < 11) {
+    var num2_str = msg.payload[6]+msg.payload[7];
+}
+else {
+    var num2_str = msg.payload[6]+msg.payload[7]+msg.payload[8];
+}
+msg.payload = num1_str;
+var newMsg = {payload: num2_str}
+return [msg, newMsg];
+\end{lstlisting}
+
+Un flanco de apagado detiene el script con el comando \ref{comand:stopGettingDataRHA} y manda un 0 a la representación de la información
+
+% Configuración de la visualización del código SW
+\lstset{backgroundcolor=\color{verde_p}, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=single, label=command:stopGettingDataRHA]
+$ sudo pkill -f receive.py
+\end{lstlisting}
+
+El flujo de configuración de la emisión de datos se encuentra en la figura \ref{fig:configRHA}. En resumen, obtiene los datos de posiciones articulares y modo de comunicación de la interfaz gráfica y los asigna a variables de flujo. Las posiciones articulares están limitadas por los slider: para el codo, los valores estan entre \textbf{60 y 110}; para el hombro, entre \textbf{125 y 166}. Las funciones \textit{FlowVar elbow}, \textit{FlowVar shoulder} y \textit{FlowVar ComMode} son similares a \textit{FlowVar status} (código \ref{code:FlowVarStatus}). El flujo también establece los valores iniciales para codo, hombro y modo de comunicación; siendo 60, 125 y AT respectivamente.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/configFlowRHA.png}
+\caption{Flujo de configuración de RHA}
+\label{fig:configRHA}
+\end{figure}
+
+En la figura \ref{fig:emisionRHA} se recoge el flujo correspondiente a la emisión de datos al RHA. Comprueba el tipo de comunicación y elige el script a correr de acuerdo a ello. Previamente, obtiene las coordenadas articulares para pasárselas a los scripts.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/emisionFlowRHA.png}
+\caption{Flujo de emisión de RHA}
+\label{fig:emisionRHA}
+\end{figure}
+
+Función \textit{GetMode}:
+
+% Esto para configurar como se va a visualizar el código
+\lstset{numbers=left,numberstyle=\tiny, language=Java, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=leftline, caption={GetMode}, label=code:GetMode]
+if (flow.get("ComMode") === undefined) {
+    flow.set("ComMode","AT");
+}
+if (flow.get("status") == "ON") {
+    msg.payload = flow.get("ComMode");
+}
+return msg;
+\end{lstlisting}
+
+Función \textit{GetConfig}:
+
+\begin{lstlisting}[frame=leftline, caption={GetConfig}, label=code:GetConfig]
+var posX = flow.get("RHA_shoulder");
+var posY = flow.get("RHA_elbow");
+var hex_posX = posX.toString(16);
+var hex_posY = posY.toString(16);
+msg.payload = [hex_posX,hex_posY];
+return msg;
+\end{lstlisting}
+
+Comandos para enviar los mensajes AT y API. En la práctica, \textit{msg.payload} se añade al final del comando.
+
+% Configuración de la visualización del código SW
+\lstset{backgroundcolor=\color{verde_p}, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=single, label=command:sendDataRHA]
+$ sudo python /home/pi/Xbee/send-AT.py
+$ sudo python /home/pi/Xbee/send-API.py
+\end{lstlisting}
 
 \subsection{Python scripts}
+
+En la Raspberry Pi estan guardados una serie se scripts en lenguaje Python que son los encargados de enviar (tanto en modo AT, como en modo API) y recibir la información.
+
+Unos comentarios sobre la edición y compilación de scripts escritos en Python en una máquina que corra Raspbian y, en general, cualquier sistema operativo basado en GNU/Linux, pueden ser encontrados en el Anexo \ref{anexo:scripts}.
+
+\subsubsection{SendAT.py}
+
+\subsubsection{SendAPI.py}
+
+\subsubsection{Receive.py}
 
 
 \section{Transmisión de la información}
@@ -207,9 +609,17 @@ Los mensajes en el topic de la habitación siguen un mismo formato:
 
 \subsubsection{Modificaciones Software}
 
+
 \section{Integración}
 
 \subsection{MQTT - Node-RED}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/MQTTFlow.png}
+\caption{Flujo de control de Zolertia}
+\label{fig:MQTTFlow}
+\end{figure}
 
 \subsubsection{Flujos MQTT}
 
