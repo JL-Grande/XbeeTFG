@@ -60,13 +60,13 @@ Mosquitto (broker de MQTT) se instala de igual manera que cualquier otra aplicac
 En primer lugar, se actualizan los repositorios.
 
 \begin{lstlisting}[frame=single, label=command:installmqtt1]
-sudo apt-get update
+$ sudo apt-get update
 \end{lstlisting}
 
 Posteriormente, se instala Mosquitto.
 
 \begin{lstlisting}[frame=single, label=command:installmqtt2]
-sudo apt-get install mosquitto
+$ sudo apt-get install mosquitto
 \end{lstlisting}
 
 Si todo va bien, al terminar el proceso, MQTT debería estar instalado.
@@ -75,16 +75,45 @@ Para probar la instalación, se pueden usar clientes de MQTT para enviar y recib
 
 \section{Edición y compilación de scripts en Raspbian OS}\label{anexo:scripts}
 
+La edición de scripts y, en general, documentos de texto se realiza a través del programa \textit{gedit}. Es posible descargarlo e instalarlo a través del comando
 
+\begin{lstlisting}[frame=single, label=command:installgedit]
+$ sudo apt-get install gedit
+\end{lstlisting} 
+
+\textit{Gedit} es un editor de texto muy popular en sistemas basados en GNU/Linux, sencillo y ligero. Permite hacer poco más que editar el código con las herramientas más básicas, pero esto será suficiente. Se ejecuta con el comando siguiente, pero indicando el archivo que se quiere editar:
+
+\begin{lstlisting}[frame=single, label=command:rungedit]
+$ gedit /home/pi/Xbee/receive.py
+\end{lstlisting} 
+
+Los archivos con extensión \textit{.py} son scripts de Python que deben ser compilados y ejecutados. Para este cometido, existe un comando con el mismo nombre que el lenguaje. Para descargar Python, existe el siguiente comando\footnote{Se suponen los repositorios actualizados}:
+
+\begin{lstlisting}[frame=single, label=command:installpython]
+$ sudo apt install python2.7 python-pip
+\end{lstlisting} 
+
+Existen versiones posteriores de Python pero los scripts del presente proyecto han sido desarrollados de acuerdo a Python 2.7.13. Para comprobar si Python ya está instalado y su versión, se puede correr el siguiente comando:
+
+\begin{lstlisting}[frame=single, label=command:checkpython]
+$ python --version
+Python 2.7.13
+\end{lstlisting} 
+
+Por último, a continuación se indica un ejemplo del comando usado para compilar y ejecutar un script en Linux (comando \ref{command:runpython}). Se deberá indicar el nombre del archivo que  al que queremos aplicar la acción.Si el script requiere de atributos de entrada, se deberán situar a continuación del nombre del archivo.
+
+\begin{lstlisting}[frame=single, label=command:runpython]
+$ sudo python /home/pi/Xbee/receive.py
+\end{lstlisting} 
 
 \chapter{Anexo B}
 
 En el Anexo B se sitúan los desarrollos software íntegros que forman parte del proyecto.
 
 % Esto para configurar como se va a visualizar el código
-\lstset{numbers=left,numberstyle=\tiny, language=Python, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+\lstset{backgroundcolor=\color{amarillo_claro}, numbers=left,numberstyle=\tiny, language=Python, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
 
-\section{Código SendAT.py}
+\section{Código SendAT.py}\label{anexo:sendAT}
 
 \begin{lstlisting}[frame=leftline, caption={SendAT.py}, label=code:SendAT]
 #!/usr/bin/env python
@@ -106,7 +135,7 @@ ser = serial.Serial(
 
 if len(sys.argv)<2:
 	param = bytearray([0x8C,0x5A])
-	logging.warning('AT Package non-definde values')
+	logging.warning('AT Package non-defined values')
 else:
 	param = sys.argv[1]
 	
@@ -126,7 +155,7 @@ else:
 
 \end{lstlisting}
 
-\section{Código SendAPI.py}
+\section{Código SendAPI.py}\label{anexo:sendAPI}
 
 \begin{lstlisting}[frame=leftline, caption={SendAPI.py}, label=code:SendAPI]
 #!/usr/bin/env python
@@ -148,7 +177,7 @@ ser = serial.Serial(
 
 if len(sys.argv)<2:
 	param = bytearray([0x8C,0x5A])
-	logging.warning('API Package non-definde values')
+	logging.warning('API Package non-defined values')
 else:
 	param = sys.argv[1]
 	
@@ -163,8 +192,6 @@ checksum_xbee = (~(16+1+5*255+254+6+2+var1+var2+125+checksum_rha) & 0xFF)
 if var1>124 and var1<167 and var2>59 and var2<111:
         values = bytearray([0x7E, 0x00, 0x16, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFE, 0x00, 0x00, 0xFF, 0xFF, 0x06, 0x02, 0x7D, var1, var2, checksum_rha, checksum_xbee])
 
-        #print(hex(values[x]))
-                
         ser.write(values)
         logging.info('API Package sent')
         
@@ -172,7 +199,7 @@ else:
         logging.warning('API Package out of range')
 \end{lstlisting}
 
-\section{Código Receive.py}
+\section{Código Receive.py}\label{anexo:receive}
 
 \begin{lstlisting}[frame=leftline, caption={Receive.py}, label=code:Receive]
 #!/usr/bin/env python
@@ -211,6 +238,7 @@ while True:
                 dev = [data[6],data[11]]
                 logging.info(data)
                 print(dev,file=sys.stderr)
+                
 \end{lstlisting}
 
 \chapter{Anexo C}
