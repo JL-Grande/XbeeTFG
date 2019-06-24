@@ -164,7 +164,7 @@ Existen varios \textit{Broker} de MQTT pero, con diferencia, el más popular es 
 
 Una guía para su instalación puede encontrarse en el Anexo \ref{anexo:mqtt}
 
-\subsubsection{MQTT en RoboHealth}
+\subsubsection{MQTT en RoboHealth}\label{subsubsec:RH_MQTT}
 
 En cuanto al funcionamiento dentro de la habitación, existe un topic denominado \textit{Robohealth/room/devices} donde publican los distintos dispositivos mientras Node-RED está suscrito.
 
@@ -178,7 +178,7 @@ $$\{'id':xx,'atrib1':'yy','atrib2':'zz',(...)\}$$
 
 \textit{yy}, \textit{zz} y sucesivos son los valores correspondientes a los atributos. En el caso del brazo deberán pasarse las dos \textbf{coordenadas articulares en formato hexadecimal}.
 
-\subsection{Node-RED}
+\subsection{Node-RED}\label{subsec:nodered}
 
 Node-RED es una herramienta de programación basada en una interfaz de programación online representada a través de flujos y nodos (figura \ref{fig:nodeinterfaz}). Viene preinstalada en Raspbian Stretch, lo que puede dar una idea del grado de integración que tiene esta herramienta en la comunidad.
 
@@ -486,7 +486,7 @@ El flujo de recepción de la información de RHA se programa como en la figura \
 \label{fig:RecepcionRHA}
 \end{figure}
 
-La recepción de un flanco de encendido, pone a correr el comando \ref{comand:getDataRHA} que lanza un script que devuelve los datos recibidos. Estos datos se interpretan con la función \textit{Data interpreter} (código \ref{code:DataInterpreter}) y se muestra la información en el Dashboard con una salida gráfica
+La recepción de un flanco de encendido, pone a correr el comando \ref{command:getDataRHA} que lanza un script que devuelve los datos recibidos. Estos datos se interpretan con la función \textit{Data interpreter} (código \ref{code:DataInterpreter}) y se muestra la información en el Dashboard con una salida gráfica
 
 % Configuración de la visualización del código SW
 \lstset{backgroundcolor=\color{verde_p}, numbers=none, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
@@ -570,8 +570,8 @@ Comandos para enviar los mensajes AT y API. En la práctica, \textit{msg.payload
 \lstset{backgroundcolor=\color{verde_p}, numbers=none, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
 
 \begin{lstlisting}[frame=single, label=command:sendDataRHA]
-$ sudo python /home/pi/Xbee/send-AT.py
-$ sudo python /home/pi/Xbee/send-API.py
+$ sudo python /home/pi/Xbee/sendAT.py
+$ sudo python /home/pi/Xbee/sendAPI.py
 \end{lstlisting}
 
 \subsection{Python scripts}
@@ -886,7 +886,7 @@ Esta configuración permite que aquello que envíe el microcontrolador sea trans
 
 Lógicamente, ya que se desea una comunicación bidireccional de datos con una Raspberry Pi, esta configuración queda descartada.
 
-\subsubsection{Modo USB}
+\subsubsection{Modo USB}\label{subsubsec:USBXB}
 
 El otro modo alcanzable a través de los jumpers es el modo USB. Este modo consiste en la comunicación directa del pin DOUT del XBee al RX del USB y, por su parte, la conexión del pin DIN al TX del USB. 
 
@@ -901,9 +901,9 @@ En concreto, hay una situacion en la que este modo adquiere especial sentido: a 
 
 RoboHealth Arm\cite{Heredia1:2018} (figura \ref{fig:RHA}) es un brazo robótico de tres grados de libertad cuyo sistema de acción se basa en un mecanismo controlado por una serie de cuerdas que son recogidas o liberadas por unos servos. Unos potenciónetros realimentan la posición de las dos articulaciones que funcionan con este mecanismo. El tercer grado de libertad, encargado de la rotación sobre su eje, no funciona de igual manera, sino que lo hace a través de un engranaje simple sin haber forma de realimentar su posición. Por lo tanto, el control de este tercer eje es absoluto.
 
-\begin{figure}[bth]
+\begin{figure}[bt]
 \centering
-\includegraphics[width=1.1\textwidth, frame]{figuras/RHA.png}
+\includegraphics[width=0.8\textwidth]{figuras/RHA.png}
 \caption{RoboHealth Arm}
 \label{fig:RHA}
 \end{figure}
@@ -914,34 +914,240 @@ RoboHealth Arm se trata de un Trabajo Final de Grado\cite{Heredia1:2018} realiza
 
 \subsection{Protocolo de comunicación RHA}
 
-RoboHealth Arm incluye en su desarrollo un protocolo de comunicación detallado en \cite{Heredia1:2018}/Anexo E.
+RoboHealth Arm incluye en su desarrollo un protocolo de comunicación detallado en \cite{Heredia1:2018}/Anexo E. Los mensajes enmarcados en este protocolo siguen la estructura recogida en la tabla \ref{tab:RHAcom}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|m{15mm}|m{15mm}|m{15mm}|m{15mm}|m{5mm}|m{5mm}|m{5mm}|m{5mm}|m{5mm}|m{20mm}|}
+\hline
+\multicolumn{2}{|c|}{\textbf{Encabezado}} & \textbf{Longitud} & \textbf{Tipo} & \multicolumn{5}{|c|}{\textbf{Parámetros}} & \textbf{Checksum}\\
+\hline
+\hline
+1 & 2 & 3 & 4 & 5 & 6 & 7 & ... & n & n+1\\
+\hline
+0xFF & 0xFF & Longitud & Tipo & \multicolumn{5}{|c|}{Parámetros del mensaje} & Byte de Checksum\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Estructura de un paquete genérico de comunicación RHA}
+\label{tab:RHAcom}
+\end{table}
 
 En general, este proyecto se centra en dos tipos de mensajes.
 
+\begin{itemize}
+\item \textbf{Frame de estado}
+
+Mensaje enviado de forma periódica desde el brazo informando de su estado. Como se puede apreciar en la estructura del frame recogida en la tabla \ref{tab:frameEstado}, permite conocer posición, velocidad y par de cada articulación.
+
+\begin{table}[bth]
+\begin{center}
+\begin{tabular}{|m{15mm}|m{80mm}|}
+\hline
+\textbf{Byte} & \textbf{Información contenida}\\
+\hline
+0 & Encabezado (Fijo: 0xFF)\\
+\hline
+1 & Encabezado (Fijo: 0xFF)\\
+\hline
+2 & Longitud (0x06)\\
+\hline
+3 & Tipo (0x02)\\
+\hline
+4 & Objetivo de posición para la primera articulación\\
+\hline
+5 & Objetivo de posición para la segunda articulación\\
+\hline
+6 & Objetivo de posición para la tercera articulación\\
+\hline
+7 & \textit{Checksum}\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Estructura del frame de comando}
+\label{tab:frameComando}
+\end{table}
+
+\begin{table}[bth]
+\begin{center}
+\begin{tabular}{|m{15mm}|m{60mm}|}
+\hline
+\textbf{Byte} & \textbf{Información contenida}\\
+\hline
+0 & Encabezado (Fijo: 0xFF)\\
+\hline
+1 & Encabezado (Fijo: 0xFF)\\
+\hline
+2 & Longitud a leer (18)\\
+\hline
+3 & Tipo de mensaje (0)\\
+\hline
+\multicolumn{2}{|c|}{\textbf{Información de la primera articulación}}\\
+\hline
+4 & Posición articular\\
+\hline
+5 & Velocidad (con dirección). Byte L\\
+\hline
+6 & Velocidad (con dirección). Byte H\\
+\hline
+7 & Par aplicado (con dirección). Byte L\\
+\hline
+8 & Par aplicado (con dirección). Byte H\\
+\hline
+\multicolumn{2}{|c|}{\textbf{Información de la segunda articulación}}\\
+\hline
+9 & Posición articular\\
+\hline
+10 & Velocidad (con dirección). Byte L\\
+\hline
+11 & Velocidad (con dirección). Byte H\\
+\hline
+12 & Par aplicado (con dirección). Byte L\\
+\hline
+13 & Par aplicado (con dirección). Byte H\\
+\hline
+\multicolumn{2}{|c|}{\textbf{Información de la tercera articulación}}\\
+\hline
+14 & Posición articular\\
+\hline
+15 & Velocidad (con dirección). Byte L\\
+\hline
+16 & Velocidad (con dirección). Byte H\\
+\hline
+17 & Par aplicado (con dirección). Byte L\\
+\hline
+18 & Par aplicado (con dirección). Byte H\\
+\hline
+19 & \textit{Checksum}\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Estructura del frame de estado}
+\label{tab:frameEstado}
+\end{table}
+
+\item \textbf{Frame de comando}
+
+Es el mensaje utilizado para comandar el brazo robótico. RHA está permanentemente leyendo la entrada serial. La codificación de este tipo de mensaje se muestra en la tabla \ref{tab:frameComando}.
+
+
+
+\end{itemize}
+
 \subsection{Modificaciones a RHA}
+
+Se han realizado una serie de modificaciones al brazo robótico RHA con el fin de, por un lado, hacerlo compatible con las tecnologías usadas en este proyecto y, por el otro, solucionar algunos defectos que tenía.
+
+En todo caso, la intención a lo largo del desarrollo del proyecto es obtener buenos resultados con una modificación mínima del estado inicial del brazo robótico, reduciendo al mínimo la posibilidad de generar incompatibilidades con futuros desarrollos ya planificados.
 
 \subsubsection{Modificaciones Hardware}
 
+Con modificaciones hardware se cuentan los cambios al proyecto inicial en cuanto a la configuración física, sensores o actuadores.
+
+\begin{itemize}
+\item El brazo robótico, de inicio, no tenía montado el mecanismo destinado al eje de rotación. Su funcionamiento era mejorable y este propósito se sale fuera del marco del presente proyecto, así que se decidió trabajar ignorando este eje.
+
+\item El servo encargado de mover la articulación correspondiente al codo del RHA reportaba un error de sobrecarga aunque se le intentara hacer funcionar en vacío. La sensación al forzar la rotación sin alimentar el servo era muy diferente a la del otro servo que funcionaba correctamente, era mucho más difícil provocar esa rotación con la mano. Por todo esto, se concluyó que el servo estaba defectuoso y se sustituyó físicamente por el servo hasta ese momento encargado del movimiento del eje de rotación que se había definido como inutilizado.
+
+\item Los potenciómetros no captaban de manera adecuada los movimientos de sus respectivos ejes. En el caso del codo, la pieza de impresión 3D que encajaba en el potenciómetro para rotarlo se había partido. En la articulación del hombro, la pieza de engranaje encargada de rotar el potenciómetro había cogido cierta holgura, provocando que no se generara rotación en la totalidad del movimiento del eje. En ambos casos se han solucionado los problemas mediante la utilización de un pegamento suficientemente fuerte.
+\end{itemize}
+
+
 \subsubsection{Modificaciones Software}
 
+Teniendo en mente que la intención es reducir las modificaciones software lo máximo posible, solo se han hecho dos cambios de manera obligatoria.
+\begin{itemize}
+\item El defecto hardware que ha obligado a cambiar la posición de los servos tiene repercusiones en el software. Los servos no permiten otro orden de conexión más allá del previamente establecido. Más información sobre la comunicación del brazo con los servos puede encontrarse en el \cite{Heredia1:2018}/Anexo D. Si se cambia la posición física de los servos pero no se tocan sus conexiones, no hay más remedio que intercambiar la identificación de los servos en el software.
+
+\item Como se ha mencionado en el apartado \ref{subsubsec:xctu}, la tasa de baudios máxima configurable para la comunicación serial de los módulos XBee es 115200. En el brazo robótico, la interfaz encargada de mandar frames de estado y recibir frames de comando trabajaba a 250000. Este dato también ha tenido que ser modificado para habilitar la comunicación, haciéndolo coincidir con el baudaje de los módulos XBee.
+\end{itemize}
+
+Por otro lado, y siendo un añadido al software, es necesaria la modificación de las funciones sendPackage() y receivePackage() para usar el modo API de comunicación. Al enviar un frame de información, este debe ser enmarcado en un API Frame de tipo 0x10 \textit{Transmit request} y eso es trabajo del software del brazo. En el mismo sentido va la modificación de la función encargada de la recepción de paquetes, debe esperarse la recepción de un API frame de manera previa a la recepción del frame propio de la comunicación con el RHA.
 
 \section{Integración}
 
 \subsection{MQTT - Node-RED}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{figuras/MQTTFlow.png}
-\caption{Flujo de recepción de MQTT}
-\label{fig:MQTTFlow}
-\end{figure}
+La conexión de los flujos de Node-RED con MQTT se realiza a través de unos nodos (figura \ref{fig:nodeMQTT}) desarrollados por terceros que ya han sido mencionados en el apartado \ref{subsec:nodered}.
+
+El objetivo final de que MQTT esté integrado en Node-RED, es poder controlar toda la red domótica desde un dispositivo central (como una tablet) cuyo software únicamente interactúe con el topic en cuestión.
+
+En el proyecto RoboHealth se han desarrollado dos flujos. Uno de ellos publica los estados de los dispositivos conectados a Vera en el topic \textit{Robohealth/room/devices}; mientras que el otro está suscrito al mismo topic con la intención de actuar de acuerdo a los mensajes codificados que se publican.
+
+Como se explicó en el apartado \ref{subsubsec:RH_MQTT}, cabe recordar que los mensajes para comandar dispositivos siguen el siguiente formato:
+
+$$\{'id':xx,'atrib1':'yy','atrib2':'zz',(...)\}$$
+
+Node-RED se encarga de añadir los atributos y sus valores al mensaje \textit{msg} para actuar en consecuencia. Usando el identificador 99, Robohealth Arm requiere de los atributos \textbf{shoulder} y \textbf{elbow}.
+
+Así, por ejemplo, si se quiere comandar Robohealth Arm desde MQTT sólo será necesario publicar un mensaje como el siguiente en el topic \textit{Robohealth/room/devices}.
+
+$$\{'id':99,'shoulder':'8C','elbow':'5A'\}$$
 
 \subsubsection{Flujos MQTT}
 
-\subsection{User Interface - Node-RED}
+En la actual sección se presentan los flujos de Node-RED que interactúan con MQTT, bien publicando en cierto \textit{topic} o subscribiéndose al mismo.
 
-\subsubsection{Flujos UI/Node-RED}
+El flujo presentado en la figura \ref{fig:MQTTFlowR} muestra la etapa de suscripción. Está permanentemente a la escucha de las publicaciones de \textit{Robohealth/room/devices} y transforma el formato del mensaje MQTT en un objeto \textit{msg} propio de Node-RED gracias al \textit{nodo JSON}\footnote{Se trata de un nodo que ejecuta conversiones en ambos sentidos entre un string JSON (el mensaje de MQTT) y un objeto de JavaScript (el objeto \textit{msg} de Node-RED)}. El nodo Switch sirve para clasificar el mensaje en función de su identificador. A partir de ese punto, la acción es específica del dispositivo representado por el identificador recibido.
+
+En el caso del brazo robótico, con identificador 99, se sitúa su salida en último lugar. La función \textit{Adapt msg} genera un \textit{msg.payload} compatible con el script sendAT.py (anexo \ref{anexo:sendAT}), que se ejecuta posteriormente.
+
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/MQTTFlowR.png}
+\caption{Flujo de subscripción a MQTT}
+\label{fig:MQTTFlowR}
+\end{figure}
+
+En la figura \ref{fig:MQTTFlowP} se muestra el flujo que publica en MQTT el estado de los dispositivos relacionados con la red Vera con fines informativos para los dispositivos suscritos al topic. 
+
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/MQTTFlowR.png}
+\caption{Flujo de publicación en  MQTT}
+\label{fig:MQTTFlowP}
+\end{figure}
 
 \subsection{Node-Red - XBee}\label{subsec:NR-Xbee}
 
+La integración de Node-RED con los módulos Xbee se realiza a través de comunicación serial comandada a través de los distintos scripts recogidos en el Anexo \ref{anexo:b}.
+
+En Node-RED los scripts son llamados usando el nodo Exec (comentado en el apartado \ref{subsec:nodered}). Los nodos de envío se ejecutan rápidamente sin problemas y no generan salidas. El nodo de recepción, en cambio, permanece durante un tiempo indefinido volcando mensajes de estado del brazo robótico al flujo de Node-RED. Como inconveniente, comentar que no ha sido posible sacar las salidas correctas del programa por la salida estándar \textit{stdout} en Node-RED. Como se puede observar en el código \ref{code:Receive} y en el flujo de recepción de datos (figura \ref{fig:RecepcionRHA}, este problema se ha solucionado recurriendo a la salida de error \textit{stderr} que, en Node-RED, sí que funcionaba adecuadamente.
+
+La comunicación serial se realiza con la configuración estándar (código \ref{code:SerialConf}), normalmente usada por defecto para la mayoría de dispositivos. Se establece, eso sí, una tasa de baudios de 115200 que, recordamos, era el máximo admisible por los módulos XBee
+
+% Esto para configurar como se va a visualizar el código
+\lstset{backgroundcolor=\color{amarillo_claro}, numbers=left,numberstyle=\tiny, language=Python, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
+
+\begin{lstlisting}[frame=leftline, caption={Configuración serial}, label=code:SerialConf]
+ser = serial.Serial(
+	port='/dev/ttyACM0',
+	baudrate = 115200,
+	parity=serial.PARITY_NONE,
+	stopbits=serial.STOPBITS_ONE,
+	bytesize=serial.EIGHTBITS,
+	timeout=1
+)
+\end{lstlisting}
+
+No es necesario hacer ninguna modificación a la información más allá de los scripts, por lo que la configuración hardware en modo USB de la XBee Shield encaja perfectamente en nuestras necesidades. Como se ha indicado previamente en el apartado \ref{subsubsec:USBXB}, es necesario retirar el microcontrolador del Arduino UNO y la unión funcionará como una conexión directa serie entre la Raspberry Pi y el módulo XBee Coordinador.
+
+También existe la posibilidad de conectar el módulo Xbee directamente usando los pines dedicados a comunicación serie del módulo y de la Raspberry Pi (figura \ref{fig:RPiXBserial}). Se ha optado por la primera solución porque esta segunda va a ser la aplicada en el siguiente apartado y por facilitar en montaje y la conexión en el lado de la unidad de mando. 
+
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/RPiXBserial.png}
+\caption{Conexión serial alternativa XBee-RPi}
+\label{fig:RPiXBserial}
+\end{figure}
+
 \subsection{XBee - RHA}
+
+Por su parte, no hay otra opción para conectar el módulo XBee al Arduino Mega del RoboHealth Arm que usar los pines seriales. Estos pines son, en el módulo XBee, DOUT y DIN y, en el Arduino Mega, D0(RX) y D1(TX)\footnote{El Arduino Mega posee otros tres puertos seriales que podrían ser igualmente usados}. El diagrama de conexiones se muestra en la figura \ref{fig:AMegaXBserial}. Existe la posibilidad de usar alguno de los dos puertos seriales restantes\footnote{Uno de los tres está usado por los servos} para evitar cualquier potencial interferencia en la comunicación por el USB pero esto implicaría modificar el código cambiando el puerto serial de la interfaz \textit{Pynterface}.
+
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=0.5\textwidth]{figuras/AMegaXBserial.png}
+\caption{Conexión serial Arduino Mega - XBee}
+\label{fig:AMegaXBserial}
+\end{figure}
