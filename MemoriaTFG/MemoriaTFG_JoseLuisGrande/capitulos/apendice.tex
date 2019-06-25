@@ -245,11 +245,83 @@ while True:
 
 El Anexo C recoge la documentación de interés de distintos componentes del proyecto
 
-\section{Documentación de XBee Shield}
+\section{Documentación de XBee Shield}\label{anexo:XBShield}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=1\textwidth]{figuras/XbeeShSch.png}
 \caption{Esquemático de XBee Shield}
 \label{fig:esquemaXBShield}
+\end{figure}
+
+\section{Pruebas del proyecto}\label{anexo:test}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/trec1.png}
+\caption{Test de recepción de datos AT}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/trec2.png}
+\caption{Test de recepción de datos genérico 1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/trec4.png}
+\caption{Test de recepción de datos genérico 2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/trec3.png}
+\caption{Test de recepción de datos MQTT}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/temat.png}
+\caption{Test de emisión AT de datos}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figuras/tresp.png}
+\caption{Detalle de la respuesta ante un paquete de mando}
+\end{figure}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|m{15mm}|m{15mm}||m{15mm}|m{15mm}||m{15mm}|m{15mm}||m{15mm}|m{15mm}|}
+\hline
+\textbf{Muestra} & \textbf{tiempo} & \textbf{Muestra} & \textbf{tiempo} & \textbf{Muestra} & \textbf{tiempo} & \textbf{Muestra} & \textbf{tiempo}\\
+\hline
+1 & 0.767 & 9 & 0.295 & 17 & 0.667 & 25 & 0.686\\
+\hline
+2 & 0.48 & 10 & 0.852 & 18 & 0.885 & 26 & 0.908\\
+\hline
+3 & 0.822 & 11 & 0.896 & 19 & 0.702 & 27 & 0.76\\
+\hline
+4 & 0.261 & 12 & 0.909 & 20 & 0.658 & 28 & 0.962\\
+\hline
+5 & 0.487 & 13 & 0.524 & 21 & 0.576 & 29 & 1.001\\
+\hline
+6 & 0.544 & 14 & 0.524 & 22 & 1.037 & 30 & 0.895\\
+\hline
+7 & 0.793 & 15 & 0.931 & 23 & 0.482 & 31 & 0.889\\
+\hline
+8 & 0.942 & 16 & 0.925 & 24 & 0.648 & - & -\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Estructura del frame de comando}
+\label{tab:frameComando}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.1\textwidth]{figuras/tmqtt.png}
+\caption{Test de uso MQTT}
 \end{figure}
