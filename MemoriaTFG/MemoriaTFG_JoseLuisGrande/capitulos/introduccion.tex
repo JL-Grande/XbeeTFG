@@ -40,7 +40,9 @@ Los objetivos parciales mencionados son los siguientes, yendo desde el lado de N
 
 \item Un programa de flujos en Node-RED debe correr sin errores en la Raspberry Pi, generando un nuevo apartado en la actual interfaz para controlar el RoboHealth Arm.
 
-\item Desarrollar una \textit{user interface} para comandar el brazo desde Node-RED. El objetivo no es otro que permitir configurar las coordenadas articulares del brazo, parámetros necesarios en el frame que posteriormente deberá recibir el RoboHealth Arm. Una vez configurados, se tendrá acceso a un botón encargado de poner en marcha la transmisión de información.
+\item Se debe generar un comando que sea capaz de mover el brazo desde un \textit{topic} de MQTT
+
+\item Desarrollar una \textit{user interface} para comandar el brazo desde Node-RED. El objetivo no es otro que permitir configurar las coordenadas articulares del brazo, parámetros necesarios en el frame que posteriormente deberá recibir el RoboHealth Arm. Una vez configurados, se tendrá acceso a un botón encargado de poner en marcha la transmisión de información. La interfaz también mostrará el estado del brazo robótico, haciendo uso del frame de estado que éste manda regularmente.
 
 \item La orden enviada desde la interfaz de Node-RED pondrá en marcha un script programado en Python que tomará como parámetros la configuración previamente establecida y enviará por uno de los puertos serie el frame generado de acuerdo a las especificaciones de diseño de la comunicación del RoboHealth Arm y el encapsulamiento de las comunicaciones vía radiofrecuencia. Toda la gestión de la ejecución de este script ha sido programada en Node-RED.
 
@@ -51,6 +53,8 @@ Los objetivos parciales mencionados son los siguientes, yendo desde el lado de N
 \item Un dispositivo XBee ha sido configurado para enviar el frame de datos recibido por comunicación serial. Al poder concentrarse todo el procesamiento de la información correspondiente al emisor en el anteriormente mencionado script, no se precisa de ningún microcontrolador adicional que funcione junto al módulo de radiofrecuencia. Así pues, el módulo XBee funciona de manera exclusiva como un traductor entre la información en el puerto serie correspondiente y las ondas de radiofrecuencia.
 
 \item El dispositivo XBee receptor de la información que comanda el brazo robótico esta situado en el mismo. Su objetivo es ser capaz de captar el mensaje de radio específicamente diseñado para él y transmitirlo al microcontrolador del brazo. De la misma manera que en el otro XBee, su función será la de traductor de las ondas de radio (excusivamente de las destinadas a él) en información en el puerto serial. Por tanto, no es necesario procesar en ningún caso la información recibida a traves de radiofrecuencia, evitando un segundo microcontrolador que escuche y adapte constantemente el módulo XBee. Esto es posible gracias al prediseño de los frames de información de acuerdo a las especificaciones y protocolos de comunicación del brazo. 
+
+\item De igual manera a lo descrito en los puntos anteriores pero en sentido opuesto, los XBee deben ser capaces de trasladar información de estado del brazo a la Raspberry Pi
 
 \item El RoboHealth Arm debe ser capaz de leer e interpretar de manera correcta la información depositada en el adecuado puerto serial. Se debe provocar la reacción esperada en el brazo, moviendo sus servos hasta las coordenadas articulares especificadas.
 
@@ -118,7 +122,7 @@ Con el fin de facilitar al lector una visión global de los campos objeto del pr
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.45\textwidth]{figuras/NodeRED.png}
+\includegraphics[width=0.7\textwidth]{figuras/NodeRED.png}
 \caption{Interfaz de edición de Node-RED}
 \label{fig:NodeRED}
 \end{figure}
@@ -134,9 +138,10 @@ A continuación, y para facilitar la lectura del documento, se detalla el conten
 \begin{itemize}
 \item En el capítulo 1 se realiza una introducción al proyecto. Un breve comentario sobre la idea y componentes del trabajo.
 \item En el capítulo 2 se exponen los fundamentos teóricos que pueden facilitar la lectura posterior del desarrollo del proyecto.
-\item En el capítulo 3 se encuenta el estado del arte, un repaso a la tecnología actualmente desarrollada incluida en el proyecto, para conocer con mayor precisión el punto de partida del mismo.
-\item En el capítulo 4 se detalla el desarrollo del trabajo. Se exploran las soluciones hardware, software, montaje...
-\item En el capítulo 5 se exponen y discuten las pruebas y los resultados del proyecto.
-\item En el capítulo 6 se describe la gestion del proyecto; incluyendo la planificación, el presupuesto, ciclo de vida...
-\item Para finalizar, en el capítulo 7 se termina con las conclusiones sacadas del proyecto y potenciales desarrollos futuros.
+\item En el capítulo 3 se encuentra el estado del arte, un repaso a la tecnología actualmente desarrollada incluida en el proyecto, para conocer con mayor precisión el punto de partida del mismo.
+\item En el capítulo 4 se detalla el diseño del trabajo. Se exploran las soluciones previas, diagramas de conceptos, etc...
+\item En el capítulo 5 se explica la implementación de las distintas soluciones en un único producto terminado y funcional.
+\item En el capítulo 6 se exponen y discuten las pruebas y los resultados del proyecto.
+\item En el capítulo 7 se describe la gestión del proyecto; incluyendo la planificación, el presupuesto, ciclo de vida...
+\item Para finalizar, en el capítulo 8 se termina con las conclusiones sacadas del proyecto y potenciales desarrollos futuros.
 \end{itemize}

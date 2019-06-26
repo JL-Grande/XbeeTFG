@@ -305,7 +305,7 @@ El nodo \textit{Delay} detiene la ejecución del programa durante el tiempo espe
 
 \item \textbf{Switch node}
 
-El nodo \textit{Switch} compara algún atributo del mensaje \textit{msg} con unos valores programados y asignados a cada una de las salidas. Es equivalente a la expresión condicional \textit{switch-case}.
+El nodo \textit{Switch} (figura \ref{fig:nodeswitch}) compara algún atributo del mensaje \textit{msg} con unos valores programados y asignados a cada una de las salidas. Es equivalente a la expresión condicional \textit{switch-case}.
 
 \begin{figure}[H]
   \centering
@@ -318,7 +318,7 @@ El nodo \textit{Switch} compara algún atributo del mensaje \textit{msg} con uno
     \includegraphics[width=\textwidth]{figuras/switchNodeProp.png}
     \subcaption{Configuración}
   \end{minipage}
-  \caption{Nodo Switch}\label{fig:nodeexec}
+  \caption{Nodo Switch}\label{fig:nodeswitch}
 \end{figure}
 
 \end{itemize}
@@ -511,7 +511,7 @@ var newMsg = {payload: num2_str}
 return [msg, newMsg];
 \end{lstlisting}
 
-Un flanco de apagado detiene el script con el comando \ref{comand:stopGettingDataRHA} y manda un 0 a la representación de la información
+Un flanco de apagado detiene el script con el comando \ref{command:stopGettingDataRHA} y manda un 0 a la representación de la información
 
 % Configuración de la visualización del código SW
 \lstset{backgroundcolor=\color{verde_p}, numbers=none, language=bash, breaklines=true, basicstyle=\footnotesize, xleftmargin=25pt, framesep=8pt, numbersep=15pt}
@@ -576,14 +576,14 @@ $ sudo python /home/pi/Xbee/sendAPI.py
 
 El resultado gráfico de todos estos nodos y flujos se plasma en una interfaz de usuario como la de la figura \ref{fig:DashRHA}.
 
+Se puede observar un switch de ON/OFF para habilitar o deshabilitar la emisión y recepción de información. Las coordenadas articulares de hombro y codo son representadas mientras se actualizan en directo. Hay otro switch para seleccionar el moto de transmisión de datos y, por último, dos sliders para seleccionar una posición objetivo y un botón para lanzar la información al brazo robótico.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{figuras/DashRHA.png}
 \caption{Dashboard para el control de RHA}
 \label{fig:DashRHA}
 \end{figure}
-
-Se puede observar un switch de ON/OFF para habilitar o deshabilitar la emisión y recepción de información. Las coordenadas articulares de hombro y codo son representadas mientras se actualizan en directo. Hay otro switch para seleccionar el moto de transmisión de datos y, por último, dos sliders para seleccionar una posición objetivo y un botón para lanzar la información al brazo robótico.
 
 
 \section{Transmisión de la información}
@@ -730,7 +730,7 @@ Existen tres posibles funciones de cada módulo XBee dependiendo de la posición
 
 El coordinador es el nodo central de la red. Su presencia en la red domótica es obligatoria y única (sólo se permite un nodo coordinador en la red). Se encarga de gestionar el resto de dispositivos, conecta y desconecta dispositivos de la red, asigna direcciones, traza mandatos y gestiona el consumo de energía pudiendo dormir al resto de dispositivos. Nunca puede apagarse o ponerse en modo de ahorro de energía.
 
-\begin{figure}[H]
+\begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figuras/XbeeRed.png}
 \caption{Ejemplo de red XBee}

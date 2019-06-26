@@ -1,11 +1,26 @@
 \chapter{Conclusiones}
 
-Se presentan a continuación las conclusiones...
+Se presentan, a continuación, las conclusiones sacadas del desarrollo del proyecto, así como se proponen futuros desarrollos relacionados con las tecnologías trabajadas.
 
 \section{Conclusión}
 
-Una vez finalizado el proyecto...
+Alcanzado este punto, cabe revisar lo obtenido para hacer una valoración global de lo que ha supuesto el proyecto. 
+
+Como resumen, se han alcanzado todos los objetivos fijados al inicio gracias a un proceso de aprendizaje por varios frentes que ha culminado en una integración limpia y funcional del brazo robótico RoboHealth Arm en la red domótica existente. Desde el comienzo, las características del proyecto hacían ver que el trabajo se iba a repartir de manera modular para tratar de coordinar la distintas tecnologías presentes.
+
+XBee como soporte para la tecnología de radiofrecuencia ha resultado ser una solución realmente interesante por las facilidades que aporta tanto para trabajar con ello, como para usarlo de manera integrada. Hace unos años, Digi renovó su interfaz de configuración XCTU y ha dado un empujón muy interesante a todos sus productos XBee. Existe una comunidad grande y activa centrada en estos módulos y su gran catálogo los convierten en una de las mejores soluciones inalámbricas a día de hoy.
+
+Este proyecto ha contribuido al compendio de trabajos que se aglutinan en torno al proyecto RoboHealth y ahora un nuevo elemento se une a su red domótica, quizás el que más utilidad podría aportar a día de hoy a un supuesto paciente al que ofrecer toda esta tecnología. Un brazo robótico, usado de una manera inteligente, puede ofrecer multitud de posibilidades debido a su versatilidad.
 
 \section{Desarrollos futuros}
 
-Un posible desarrollo...
+Si bien por el lado de este proyecto se está llegando a un límite de desarrollo, existen varias propuestas que podrían desarrollarse en un futuro:
+
+\begin{itemize}
+\item La rehabilitación y actualización en una segunda revisión de RoboHealth Arm daría aún más utilidad a su integración en la red. Actualmente, RHA tiene el eje Z inutilizado y sería planteable su rehabilitación, así como el propio brazo en su conjunto podría admitir mejoras en su funcionamiento. Alguna de estas mejoras podría ser la inclusión de actuadores de señalización o iluminación, alarmas, etc; con el fin de aumentar las funcionalidades más allá del uso de la tablet para la que está concebida. Otra posibilidad es añadir un grado de libertad al robot, permitiéndole regular la orientación de la tablet haciendo uso de un servomotor.
+
+\item La inclusión de RHA en la lista de dispositivos que responden al topic MQTT de la habitación hace que se integre en un sistema que puede ser utilizado para múltiples objetivos. Uno de ellos puede ser el desarrollo de un programa que coordine todos los dispositivos a través de MQTT. De esta manera, se pueden generar recetas que aplicar bajo ciertos condicionantes. A cierta hora, subir las persianas, subir la cama y disponer la tablet al paciente; por ejemplo.
+
+\item La inclusión de nuevos elementos a la red MQTT podría proporcionar más usos a RHA. Por ejemplo, existe la posibilidad de comandar hablando el brazo robótico si se integra un sistema de reconocimiento de voz.
+
+\end{itemize}
